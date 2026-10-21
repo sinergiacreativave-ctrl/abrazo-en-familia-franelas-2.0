@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diseña tu Franela - Abrazo en Familia</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        royal: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                            950: '#172554',
+                        },
+                        amberyellow: {
+                            300: '#fde047',
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas for JPG generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Google Fonts for Comic Neue alternative -->
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Comic Neue', cursive, sans-serif;
+            background-color: #f0f4ff;
+        }
+        
+        .comic-font {
+            font-family: 'Comic Sans MS', 'Comic Neue', cursive, sans-serif;
+        }
+
+        /* Canvas styling */
+        .tshirt-container {
+            user-select: none;
+        }
+
+        .draggable-item {
+            cursor: move;
+            touch-action: none;
+            border: 2px dashed transparent;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .draggable-item:hover, .draggable-item.active {
+            border-color: #facc15;
+            box-shadow: 0 0 12px rgba(250, 204, 21, 0.8);
+        }
+
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #dbeafe;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2563eb;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1e40af;
+        }
+
+        .printable-sheet {
+            width: 1200px;
+            background: white;
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col">
+
+    <!-- Header / Banner - Royal Blue & Yellow -->
+    <header class="bg-royal-800 border-b-8 border-amberyellow-400 p-4 shadow-xl text-center relative overflow-hidden">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
+            <div class="flex items-center gap-3">
+                <div class="bg-amberyellow-400 p-3 rounded-2xl shadow-md text-royal-900 text-3xl">
+                    <i class="fa-solid fa-shirt"></i>
+                </div>
+                <div class="text-left">
+                    <h1 class="text-2xl md:text-3xl font-black text-amberyellow-400 tracking-wide drop-shadow">¡Diseña tu Franela de Arte!</h1>
+                    <p class="text-blue-100 text-xs md:text-sm font-bold">✨ Abrazo en Familia • U.E.P. SANTA ROSA DE LIMA (2026-2027) ✨</p>
+                </div>
+            </div>
+            
+            <button id="downloadBtn" onclick="generateJPG()" class="bg-amberyellow-400 hover:bg-amberyellow-300 active:scale-95 text-royal-950 font-black py-3 px-6 rounded-2xl shadow-lg border-b-4 border-amberyellow-600 flex items-center gap-2 transition duration-150 text-base">
+                <i class="fa-solid fa-file-image text-xl"></i>
+                <span>Guardar y Descargar JPG</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Controls & Inputs (5 cols) -->
+        <section class="lg:col-span-5 flex flex-col gap-5">
+            
+            <!-- Student Information Card -->
+            <div class="bg-white rounded-2xl p-5 shadow-md border-2 border-royal-200">
+                <h2 class="text-lg font-black text-royal-800 border-b-2 border-amberyellow-400 pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-user-graduate text-amberyellow-500"></i> Datos del Estudiante
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Nombre Completo:</label>
+                        <input type="text" id="studentName" value="Camila Rodríguez" oninput="updateStudentData()" class="w-full bg-slate-50 border-2 border-royal-200 rounded-xl p-2.5 text-sm font-semibold focus:border-amberyellow-400 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Grado / Sección:</label>
+                        <input type="text" id="studentGrade" value="4to Grado - B" oninput="updateStudentData()" class="w-full bg-slate-50 border-2 border-royal-200 rounded-xl p-2.5 text-sm font-semibold focus:border-amberyellow-400 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Categoría:</label>
+                        <select id="sizeCategory" onchange="handleCategoryChange()" class="w-full bg-slate-50 border-2 border-royal-200 rounded-xl p-2.5 text-sm font-semibold focus:border-amberyellow-400 focus:outline-none transition">
+                            <option value="ninos">Niños</option>
+                            <option value="dama">Dama</option>
+                            <option value="caballero">Caballero</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Talla (Zebratex):</label>
+                        <select id="sizeSelect" onchange="handleSizeChange()" class="w-full bg-slate-50 border-2 border-royal-200 rounded-xl p-2.5 text-sm font-semibold focus:border-amberyellow-400 focus:outline-none transition">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <div id="sizeBadge" class="mt-3 bg-royal-50 text-royal-900 text-xs p-2.5 rounded-xl border border-royal-200 flex justify-between items-center font-bold">
+                    <span>Ancho Pecho: <span id="shirtWidthCm">34</span> cm</span>
+                    <span>Largo: <span id="shirtLengthCm">46</span> cm</span>
+                </div>
+            </div>
+
+            <!-- Custom Text Module -->
+            <div class="bg-white rounded-2xl p-5 shadow-md border-2 border-royal-200">
+                <h2 class="text-lg font-black text-royal-800 border-b-2 border-amberyellow-400 pb-2 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-font text-amberyellow-500"></i> Texto Libre Personalizado (Comic Sans)
+                </h2>
+                <p class="text-xs text-slate-500 mb-3">Máximo 10 cm alto x 20 cm ancho real.</p>
+
+                <div class="flex gap-2 mb-3">
+                    <input type="text" id="customTextInput" placeholder="Escribe tu frase aquí..." maxlength="25" class="flex-1 bg-slate-50 border-2 border-royal-200 rounded-xl p-2.5 text-sm font-semibold focus:border-amberyellow-400 focus:outline-none transition">
+                    <button onclick="addOrUpdateText()" class="bg-royal-600 hover:bg-royal-700 text-white font-bold px-4 rounded-xl shadow transition text-sm">
+                        Aplicar
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-4 text-xs font-bold text-slate-700 bg-royal-50 p-2.5 rounded-xl border border-royal-200">
+                    <label class="flex items-center gap-1.5 cursor-pointer">
+                        <span>Color:</span>
+                        <input type="color" id="textColorPicker" value="#1d4ed8" onchange="updateTextStyle()" class="w-7 h-7 rounded cursor-pointer border-none">
+                    </label>
+                    <label class="flex items-center gap-1.5 cursor-pointer">
+                        <input type="checkbox" id="textTargetView" onchange="updateTextTargetView()" class="rounded border-royal-300 text-royal-600 focus:ring-amberyellow-400">
+                        <span>Poner en vista posterior</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Upload and Image Sizing Module -->
+            <div class="bg-white rounded-2xl p-5 shadow-md border-2 border-royal-200">
+                <div class="flex justify-between items-center border-b-2 border-amberyellow-400 pb-2 mb-3">
+                    <h2 class="text-lg font-black text-royal-800 flex items-center gap-2">
+                        <i class="fa-solid fa-image text-amberyellow-500"></i> Dibujos del Estudiante
+                    </h2>
+                    <span id="areaCounter" class="text-xs font-bold px-2.5 py-1 bg-amberyellow-400 text-royal-950 rounded-full">
+                        0 / 300 cm² (0%)
+                    </span>
+                </div>
+
+                <!-- Fast Presets -->
+                <div class="mb-3">
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Añadir con medida elegida:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="triggerFileInput(10)" class="bg-royal-50 hover:bg-royal-100 text-royal-800 border-2 border-royal-200 font-bold p-2.5 rounded-xl text-xs flex flex-col items-center gap-1 transition">
+                            <i class="fa-solid fa-vector-square text-base text-amberyellow-500"></i>
+                            <span>3 Piezas de 10x10 cm</span>
+                            <span class="text-[10px] text-royal-600 font-normal">(100 cm² cada una)</span>
+                        </button>
+                        <button onclick="triggerFileInput(5)" class="bg-amberyellow-50 hover:bg-amberyellow-100 text-royal-900 border-2 border-amberyellow-300 font-bold p-2.5 rounded-xl text-xs flex flex-col items-center gap-1 transition">
+                            <i class="fa-solid fa-grip text-base text-royal-600"></i>
+                            <span>6 Piezas de 5x5 cm</span>
+                            <span class="text-[10px] text-royal-700 font-normal">(25 cm² cada una)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+
+                <p class="text-[11px] text-slate-500 italic mb-3">
+                    * Puedes hacer combinaciones mixtas hasta alcanzar un área máxima equivalente a 300 cm² (ej. 3 de 10x10cm o 6 de 5x5cm).
+                </p>
+
+                <!-- Drawings List -->
+                <div id="drawingsList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    <p id="emptyDrawingsMsg" class="text-xs text-center text-slate-400 py-4 border-2 border-dashed border-slate-200 rounded-xl">
+                        No has subido ningún dibujo aún.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right Column: Interactive Canvas & View Selector (7 cols) -->
+        <section class="lg:col-span-7 flex flex-col gap-4">
+            
+            <!-- View Selector Tabs -->
+            <div class="bg-white rounded-2xl p-2 shadow-md border-2 border-royal-200 flex flex-wrap justify-between gap-1">
+                <button onclick="switchView('front')" id="tab-front" class="view-tab flex-1 min-w-[100px] py-2.5 px-3 rounded-xl font-black text-xs flex items-center justify-center gap-2 bg-royal-800 text-amberyellow-400 shadow transition">
+                    <i class="fa-solid fa-shirt"></i> Frontal
+                </button>
+                <button onclick="switchView('back')" id="tab-back" class="view-tab flex-1 min-w-[100px] py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 bg-slate-100 text-royal-900 hover:bg-royal-50 transition">
+                    <i class="fa-solid fa-shirt"></i> Posterior
+                </button>
+                <button onclick="switchView('sleeveLeft')" id="tab-sleeveLeft" class="view-tab flex-1 min-w-[100px] py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 bg-slate-100 text-royal-900 hover:bg-royal-50 transition">
+                    <i class="fa-solid fa-ring"></i> Manga Izq.
+                </button>
+                <button onclick="switchView('sleeveRight')" id="tab-sleeveRight" class="view-tab flex-1 min-w-[100px] py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 bg-slate-100 text-royal-900 hover:bg-royal-50 transition">
+                    <i class="fa-solid fa-ring"></i> Manga Der.
+                </button>
+            </div>
+
+            <!-- T-Shirt Interactive Canvas Box -->
+            <div class="bg-royal-900/10 rounded-2xl p-4 border-2 border-royal-200 flex flex-col items-center justify-center relative min-h-[480px] overflow-hidden shadow-inner">
+                
+                <!-- Helper Guide Badge -->
+                <div class="absolute top-3 left-3 bg-white/95 backdrop-blur-sm px-3.5 py-1.5 rounded-xl border border-royal-200 text-xs font-extrabold text-royal-800 shadow-sm z-20 flex items-center gap-2">
+                    <span id="currentViewLabel">Vista Frontal</span>
+                    <span class="text-royal-300">|</span>
+                    <span class="text-royal-600 text-[11px]" id="scaleInfo">Franela Blanca Base</span>
+                </div>
+
+                <!-- Interactive Drag Container -->
+                <div id="tshirtCanvas" class="relative tshirt-container transition-all duration-300 flex items-center justify-center" style="width: 380px; height: 460px;">
+                    <!-- SVG T-Shirt Base -->
+                    <div id="svgContainer" class="w-full h-full absolute inset-0 pointer-events-none z-0">
+                        <!-- Rendered dynamically -->
+                    </div>
+
+                    <!-- Print Area Marker (Reference Zone) -->
+                    <div id="printAreaBox" class="absolute border-2 border-amberyellow-400/60 border-dashed pointer-events-none rounded-xl z-10 flex items-center justify-center">
+                        <span class="text-[9px] text-royal-700/50 font-bold uppercase select-none">Zona de Estampado</span>
+                    </div>
+
+                    <!-- Draggable Elements Container -->
+                    <div id="itemsContainer" class="absolute inset-0 z-20">
+                        <!-- Dynamic Draggable elements added here -->
+                    </div>
+                </div>
+
+                <div class="mt-2 text-center">
+                    <p class="text-xs text-royal-900 font-bold">
+                        <i class="fa-solid fa-hand-pointer text-amberyellow-500"></i> Arrastra los dibujos y texto para posicionarlos exactamente donde deseas que se estampen.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- HIDDEN CONTAINER FOR HIGH-RES SHEET GENERATION -->
+    <div class="fixed top-[-9999px] left-[-9999px]">
+        <div id="printableSheet" class="printable-sheet p-8 font-sans">
+            <!-- Sheet Header -->
+            <div class="border-b-4 border-amberyellow-400 pb-4 mb-6 flex justify-between items-end bg-royal-800 text-white p-6 rounded-2xl">
+                <div>
+                    <h1 class="text-3xl font-black text-amberyellow-400 uppercase tracking-wide">Ficha Técnica de Producción</h1>
+                    <p class="text-sm text-blue-100 font-bold">Maqueta con Ubicación Exacta de Diseños</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-amberyellow-300 font-bold uppercase">Fecha de Emisión</p>
+                    <p id="sheetDate" class="text-sm font-bold text-white"></p>
+                </div>
+            </div>
+
+            <!-- Student Summary Bar -->
+            <div class="bg-royal-50 p-4 rounded-xl mb-6 grid grid-cols-4 gap-4 border-2 border-royal-200">
+                <div>
+                    <span class="block text-xs font-bold text-royal-700 uppercase">Estudiante</span>
+                    <span id="sheetStudentName" class="text-base font-extrabold text-slate-800">-</span>
+                </div>
+                <div>
+                    <span class="block text-xs font-bold text-royal-700 uppercase">Grado / Sección</span>
+                    <span id="sheetStudentGrade" class="text-base font-extrabold text-slate-800">-</span>
+                </div>
+                <div>
+                    <span class="block text-xs font-bold text-royal-700 uppercase">Categoría y Talla</span>
+                    <span id="sheetSize" class="text-base font-extrabold text-slate-800">-</span>
+                </div>
+                <div>
+                    <span class="block text-xs font-bold text-royal-700 uppercase">Medidas Reales</span>
+                    <span id="sheetDimensions" class="text-base font-extrabold text-royal-800">-</span>
+                </div>
+            </div>
+
+            <!-- 4 Views Grid rendering EXACT mockups -->
+            <div class="mb-6">
+                <h2 class="text-base font-black text-royal-800 uppercase mb-3 border-b-2 border-amberyellow-400 pb-1">
+                    Ubicación Final en las 4 Vistas de la Franela
+                </h2>
+                <div class="grid grid-cols-4 gap-3 bg-slate-100 p-3 rounded-2xl border-2 border-royal-200" id="sheetViewsGrid">
+                    <!-- 4 mini canvases inserted dynamically -->
+                </div>
+            </div>
+
+            <!-- Specification Legend Table -->
+            <div>
+                <h2 class="text-base font-black text-royal-800 uppercase mb-3 border-b-2 border-amberyellow-400 pb-1">
+                    Leyenda Técnica y Desglose de Elementos
+                </h2>
+                
+                <div class="grid grid-cols-12 gap-6">
+                    <!-- Left: Text Specs -->
+                    <div class="col-span-5 bg-royal-50 p-4 rounded-2xl border-2 border-royal-200">
+                        <h3 class="text-xs font-black uppercase text-royal-800 mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-font text-amberyellow-500"></i> Texto Libre Personalizado
+                        </h3>
+                        <div class="bg-white p-3 rounded-xl border border-royal-200 mb-2">
+                            <p id="sheetCustomText" class="text-lg comic-font font-bold break-words">(Sin texto)</p>
+                        </div>
+                        <ul class="text-xs text-slate-700 space-y-1 font-semibold">
+                            <li>• <strong>Tipografía:</strong> Comic Sans MS</li>
+                            <li>• <strong>Dimensión Máxima:</strong> 10 cm alto x 20 cm ancho</li>
+                            <li>• <strong>Ubicación Seleccionada:</strong> <span id="sheetTextLocation">Vista Frontal</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Right: Drawings List & Area Summary -->
+                    <div class="col-span-7 bg-amberyellow-50/60 p-4 rounded-2xl border-2 border-amberyellow-300">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-xs font-black uppercase text-royal-900 flex items-center gap-1.5">
+                                <i class="fa-solid fa-shapes text-royal-700"></i> Catálogo de Dibujos Cargados
+                            </h3>
+                            <span id="sheetTotalArea" class="text-xs font-extrabold bg-royal-800 text-amberyellow-400 px-3 py-1 rounded-full">
+                                Área Total: 0 cm² / 300 cm²
+                            </span>
+                        </div>
+
+                        <div id="sheetDrawingsGrid" class="grid grid-cols-3 gap-2">
+                            <!-- Thumbnails & Sizes populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            <!-- Footer note - ABRAZO EN FAMILIA & SCHOOL INFO -->
+            <div class="mt-6 pt-4 border-t-4 border-amberyellow-400 text-center text-sm font-black text-royal-900 bg-amberyellow-100 p-3.5 rounded-xl shadow-sm flex flex-col md:flex-row items-center justify-center gap-2">
+                <span>✨ Proyecto Especial: Abrazo en Familia - Creando juntos momentos inolvidables ✨</span>
+                <span class="hidden md:inline text-amberyellow-600">|</span>
+                <span class="text-royal-800 font-extrabold uppercase">U.E.P. SANTA ROSA DE LIMA • Año Escolar 2026-2027</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- ZEBRATEX DIMENSIONS DATA MATRIX ---
+        const SIZE_DATA = {
+            ninos: {
+                label: 'Niños',
+                tallas: {
+                    '2': { width: 27, length: 38 },
+                    '4': { width: 29, length: 40 },
+                    '6': { width: 31, length: 43 },
+                    '8': { width: 34, length: 46 },
+                    '10': { width: 37, length: 52 },
+                    '12': { width: 40, length: 58 },
+                    '14': { width: 44, length: 62 }
+                }
+            },
+            dama: {
+                label: 'Dama',
+                tallas: {
+                    'S': { width: 40, length: 63 },
+                    'M': { width: 44, length: 66 },
+                    'L': { width: 48, length: 69 },
+                    'XL': { width: 52, length: 72 }
+                }
+            },
+            caballero: {
+                label: 'Caballero',
+                tallas: {
+                    'S': { width: 49, length: 70 },
+                    'M': { width: 53, length: 72 },
+                    'L': { width: 57, length: 74 },
+                    'XL': { width: 61, length: 76 },
+                    '2XL': { width: 65, length: 78 }
+                }
+            }
+        };
+
+        // --- APP STATE ---
+        let state = {
+            studentName: 'Camila Rodríguez',
+            studentGrade: '4to Grado - B',
+            category: 'ninos',
+            sizeKey: '8',
+            currentView: 'front', // 'front', 'back', 'sleeveLeft', 'sleeveRight'
+            customText: '¡Mi Arte!',
+            textColor: '#1d4ed8',
+            textTargetBack: false,
+            textPos: {
+                front: { x: 100, y: 110 },
+                back: { x: 100, y: 110 }
+            },
+            drawings: [], // array of { id, src, sizeCm (5 or 10), view, x, y }
+            presetPendingSize: 10
+        };
+
+        // DOM Elements
+        const studentNameInput = document.getElementById('studentName');
+        const studentGradeInput = document.getElementById('studentGrade');
+        const sizeCategorySelect = document.getElementById('sizeCategory');
+        const sizeSelect = document.getElementById('sizeSelect');
+        const shirtWidthCmEl = document.getElementById('shirtWidthCm');
+        const shirtLengthCmEl = document.getElementById('shirtLengthCm');
+        const itemsContainer = document.getElementById('itemsContainer');
+        const svgContainer = document.getElementById('svgContainer');
+        const printAreaBox = document.getElementById('printAreaBox');
+        const customTextInput = document.getElementById('customTextInput');
+
+        // Init App on Load
+        window.onload = function() {
+            populateSizeSelect();
+            customTextInput.value = state.customText;
+            renderShirtVector();
+            renderCanvasItems();
+            updateAreaCounter();
+        };
+
+        // Update Student State
+        function updateStudentData() {
+            state.studentName = studentNameInput.value || 'Estudiante';
+            state.studentGrade = studentGradeInput.value || '-';
+        }
+
+        // Handle Category Selection
+        function handleCategoryChange() {
+            state.category = sizeCategorySelect.value;
+            populateSizeSelect();
+            handleSizeChange();
+        }
+
+        // Populate Talla Dropdown based on Category
+        function populateSizeSelect() {
+            sizeSelect.innerHTML = '';
+            const categoryData = SIZE_DATA[state.category].tallas;
+            const keys = Object.keys(categoryData);
+            
+            keys.forEach(key => {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = `Talla ${key} (${categoryData[key].width} x ${categoryData[key].length} cm)`;
+                sizeSelect.appendChild(opt);
+            });
+
+            state.sizeKey = keys[0];
+        }
+
+        // Handle Size Change & Rescale Vector
+        function handleSizeChange() {
+            state.sizeKey = sizeSelect.value;
+            const dims = SIZE_DATA[state.category].tallas[state.sizeKey];
+            shirtWidthCmEl.textContent = dims.width;
+            shirtLengthCmEl.textContent = dims.length;
+
+            renderShirtVector();
+            renderCanvasItems();
+        }
+
+        // Switch Active Canvas View
+        function switchView(view) {
+            state.currentView = view;
+            
+            // Toggle active classes on tabs
+            document.querySelectorAll('.view-tab').forEach(tab => {
+                tab.className = 'view-tab flex-1 min-w-[100px] py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 bg-slate-100 text-royal-900 hover:bg-royal-50 transition';
+            });
+
+            const activeTab = document.getElementById(`tab-${view}`);
+            if (activeTab) {
+                activeTab.className = 'view-tab flex-1 min-w-[100px] py-2.5 px-3 rounded-xl font-black text-xs flex items-center justify-center gap-2 bg-royal-800 text-amberyellow-400 shadow transition';
+            }
+
+            const viewLabels = {
+                front: 'Vista Frontal',
+                back: 'Vista Posterior',
+                sleeveLeft: 'Manga Izquierda',
+                sleeveRight: 'Manga Derecha'
+            };
+
+            document.getElementById('currentViewLabel').textContent = viewLabels[view];
+
+            renderShirtVector();
+            renderCanvasItems();
+        }
+
+        // --- RENDER ANATOMICALLY ACCURATE SVG VECTOR T-SHIRT ---
+        function renderShirtVector() {
+            const canvasWidth = 380;
+            const canvasHeight = 460;
+
+            const tshirtCanvas = document.getElementById('tshirtCanvas');
+            tshirtCanvas.style.width = `${canvasWidth}px`;
+            tshirtCanvas.style.height = `${canvasHeight}px`;
+
+            let svgContent = getShirtSVGMarkup(state.currentView);
+            svgContainer.innerHTML = svgContent;
+
+            if (state.currentView === 'front' || state.currentView === 'back') {
+                printAreaBox.style.width = '200px';
+                printAreaBox.style.height = '240px';
+                printAreaBox.style.top = '25%';
+                printAreaBox.style.left = '50%';
+                printAreaBox.style.transform = 'translateX(-50%)';
+                printAreaBox.style.display = 'flex';
+            } else {
+                printAreaBox.style.width = '180px';
+                printAreaBox.style.height = '180px';
+                printAreaBox.style.top = '28%';
+                printAreaBox.style.left = '50%';
+                printAreaBox.style.transform = 'translateX(-50%)';
+                printAreaBox.style.display = 'flex';
+            }
+        }
+
+        function getShirtSVGMarkup(view) {
+            if (view === 'front' || view === 'back') {
+                const isFront = view === 'front';
+                return `
+                    <svg viewBox="0 0 500 550" class="w-full h-full drop-shadow-xl" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="fabricGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ffffff"/>
+                                <stop offset="80%" stop-color="#f8fafc"/>
+                                <stop offset="100%" stop-color="#e2e8f0"/>
+                            </linearGradient>
+                            <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+                                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-opacity="0.1"/>
+                            </filter>
+                        </defs>
+                        
+                        <g filter="url(#softShadow)">
+                            <!-- Wide, Comfortable Anatomical T-Shirt Silhouette Body & Broad Sleeves -->
+                            <path d="
+                                M 180,75 
+                                C 205,100 295,100 320,75 
+                                Q 380,88 460,118
+                                C 475,123 468,175 448,215
+                                L 380,185
+                                L 380,480
+                                Q 380,490 370,490
+                                L 130,490
+                                Q 120,490 120,480
+                                L 120,185
+                                L 52,215
+                                C 32,175 25,123 40,118
+                                Q 120,88 180,75
+                                Z" 
+                                fill="url(#fabricGrad)" stroke="#94a3b8" stroke-width="4" stroke-linejoin="round"/>
+
+                            <!-- Neck Collar Ribbing -->
+                            ${isFront ? `
+                                <!-- Front Round U-Neck -->
+                                <path d="M 180,75 C 200,135 300,135 320,75 C 295,115 205,115 180,75 Z" fill="#f1f5f9" stroke="#64748b" stroke-width="3"/>
+                                <path d="M 180,75 C 200,120 300,120 320,75" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+                            ` : `
+                                <!-- Back Shallow Neck -->
+                                <path d="M 180,75 C 210,95 290,95 320,75 C 290,88 210,88 180,75 Z" fill="#f1f5f9" stroke="#64748b" stroke-width="3"/>
+                            `}
+
+                            <!-- Broad Armhole Seams (Sisas amplias de corte estándar) -->
+                            <path d="M 180,75 C 145,120 130,150 120,185" fill="none" stroke="#cbd5e1" stroke-width="3"/>
+                            <path d="M 320,75 C 355,120 370,150 380,185" fill="none" stroke="#cbd5e1" stroke-width="3"/>
+
+                            <!-- Wide Sleeve Hem Stitching -->
+                            <path d="M 42,120 L 54,210" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="3,3"/>
+                            <path d="M 458,120 L 446,210" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="3,3"/>
+
+                            <!-- Bottom Hem Stitching -->
+                            <path d="M 120,478 L 380,478" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="4,3"/>
+                        </g>
+                    </svg>
+                `;
+            } else {
+                // Wide Sleeve View
+                return `
+                    <svg viewBox="0 0 500 550" class="w-full h-full drop-shadow-xl" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="sleeveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ffffff"/>
+                                <stop offset="100%" stop-color="#f1f5f9"/>
+                            </linearGradient>
+                        </defs>
+                        <g>
+                            <path d="
+                                M 100,110 
+                                C 250,50 400,110 440,200 
+                                L 380,430 
+                                Q 370,445 350,445 
+                                L 150,445 
+                                Q 130,445 120,430 
+                                L 60,200 
+                                Z" 
+                                fill="url(#sleeveGrad)" stroke="#94a3b8" stroke-width="4" stroke-linejoin="round"/>
+                            
+                            <!-- Sleeve Hem Double Stitch -->
+                            <path d="M 122,410 L 378,410" stroke="#64748b" stroke-width="2.5" stroke-dasharray="4,3"/>
+                            <path d="M 100,110 C 250,140 400,110 440,200" fill="none" stroke="#cbd5e1" stroke-width="3"/>
+                        </g>
+                    </svg>
+                `;
+            }
+        }
+
+        // --- DRAWINGS & UPLOAD MANAGEMENT ---
+        function triggerFileInput(sizeCm) {
+            state.presetPendingSize = sizeCm;
+            document.getElementById('imageInput').click();
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const requiredArea = state.presetPendingSize === 10 ? 100 : 25;
+            const currentTotalArea = calculateTotalArea();
+
+            if (currentTotalArea + requiredArea > 300) {
+                alert(`¡Atención! La pieza de ${state.presetPendingSize}x${state.presetPendingSize}cm (${requiredArea}cm²) supera el área total permitida de 300 cm² (equivalente a 3 de 10x10 cm o 6 de 5x5 cm). Área usada actualmente: ${currentTotalArea}cm².`);
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const newDrawing = {
+                    id: 'draw_' + Date.now(),
+                    src: e.target.result,
+                    sizeCm: state.presetPendingSize,
+                    view: state.currentView,
+                    x: 130 + (state.drawings.length * 15) % 60,
+                    y: 150 + (state.drawings.length * 15) % 60
+                };
+
+                state.drawings.push(newDrawing);
+                renderDrawingsList();
+                renderCanvasItems();
+                updateAreaCounter();
+            };
+            reader.readAsDataURL(file);
+            event.target.value = '';
+        }
+
+        function removeDrawing(id) {
+            state.drawings = state.drawings.filter(d => d.id !== id);
+            renderDrawingsList();
+            renderCanvasItems();
+            updateAreaCounter();
+        }
+
+        function calculateTotalArea() {
+            return state.drawings.reduce((sum, d) => sum + (d.sizeCm * d.sizeCm), 0);
+        }
+
+        function updateAreaCounter() {
+            const total = calculateTotalArea();
+            const percentage = Math.round((total / 300) * 100);
+            const counterEl = document.getElementById('areaCounter');
+            counterEl.textContent = `${total} / 300 cm² (${percentage}%)`;
+
+            if (total >= 300) {
+                counterEl.className = 'text-xs font-bold px-2.5 py-1 bg-red-500 text-white rounded-full';
+            } else {
+                counterEl.className = 'text-xs font-bold px-2.5 py-1 bg-amberyellow-400 text-royal-950 rounded-full';
+            }
+        }
+
+        function renderDrawingsList() {
+            const container = document.getElementById('drawingsList');
+            if (state.drawings.length === 0) {
+                container.innerHTML = `
+                    <p id="emptyDrawingsMsg" class="text-xs text-center text-slate-400 py-4 border-2 border-dashed border-slate-200 rounded-xl">
+                        No has subido ningún dibujo aún.
+                    </p>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            state.drawings.forEach((drawing, index) => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between bg-royal-50 border border-royal-200 p-2 rounded-xl text-xs';
+                
+                const viewBadge = {
+                    front: 'Frontal',
+                    back: 'Posterior',
+                    sleeveLeft: 'Manga Izq.',
+                    sleeveRight: 'Manga Der.'
+                }[drawing.view];
+
+                item.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <img src="${drawing.src}" class="w-8 h-8 object-cover rounded-lg border border-royal-300">
+                        <div>
+                            <span class="font-bold block text-royal-950">Dibujo #${index + 1} (${drawing.sizeCm}x${drawing.sizeCm} cm)</span>
+                            <span class="text-[10px] text-royal-600 font-bold">En: ${viewBadge}</span>
+                        </div>
+                    </div>
+                    <button onclick="removeDrawing('${drawing.id}')" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 transition">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // --- CUSTOM TEXT MANAGEMENT ---
+        function addOrUpdateText() {
+            state.customText = customTextInput.value.trim();
+            renderCanvasItems();
+        }
+
+        function updateTextStyle() {
+            state.textColor = document.getElementById('textColorPicker').value;
+            renderCanvasItems();
+        }
+
+        function updateTextTargetView() {
+            state.textTargetBack = document.getElementById('textTargetView').checked;
+            renderCanvasItems();
+        }
+
+        // --- RENDER ITEMS ON CANVAS & ATTACH DRAG HANDLERS ---
+        function renderCanvasItems() {
+            itemsContainer.innerHTML = '';
+
+            // 1. Render Custom Text if visible in current view
+            const textVisibleInView = (state.textTargetBack && state.currentView === 'back') || (!state.textTargetBack && state.currentView === 'front');
+
+            if (state.customText && textVisibleInView) {
+                const textEl = document.createElement('div');
+                textEl.id = 'draggable-text';
+                textEl.className = 'draggable-item absolute comic-font font-bold select-none p-1 rounded z-30 cursor-move';
+                
+                textEl.style.maxHeight = '90px';
+                textEl.style.maxWidth = '180px';
+                textEl.style.fontSize = '20px';
+                textEl.style.color = state.textColor;
+                textEl.style.textShadow = '1px 1px 2px rgba(255,255,255,0.9)';
+                textEl.textContent = state.customText;
+
+                const pos = state.textTargetBack ? state.textPos.back : state.textPos.front;
+                textEl.style.left = `${pos.x}px`;
+                textEl.style.top = `${pos.y}px`;
+
+                makeElementDraggable(textEl, (newX, newY) => {
+                    if (state.textTargetBack) {
+                        state.textPos.back = { x: newX, y: newY };
+                    } else {
+                        state.textPos.front = { x: newX, y: newY };
+                    }
+                });
+
+                itemsContainer.appendChild(textEl);
+            }
+
+            // 2. Render Drawings matching current view
+            const viewDrawings = state.drawings.filter(d => d.view === state.currentView);
+            
+            viewDrawings.forEach(drawing => {
+                const imgWrap = document.createElement('div');
+                imgWrap.className = 'draggable-item absolute z-20 rounded-lg overflow-hidden shadow-md';
+                
+                const pxSize = drawing.sizeCm === 10 ? 70 : 38; 
+                imgWrap.style.width = `${pxSize}px`;
+                imgWrap.style.height = `${pxSize}px`;
+                imgWrap.style.left = `${drawing.x}px`;
+                imgWrap.style.top = `${drawing.y}px`;
+
+                imgWrap.innerHTML = `
+                    <img src="${drawing.src}" class="w-full h-full object-cover pointer-events-none">
+                    <span class="absolute bottom-0 right-0 bg-royal-950/80 text-amberyellow-400 text-[8px] px-1 font-mono font-bold">${drawing.sizeCm}cm</span>
+                `;
+
+                makeElementDraggable(imgWrap, (newX, newY) => {
+                    drawing.x = newX;
+                    drawing.y = newY;
+                });
+
+                itemsContainer.appendChild(imgWrap);
+            });
+        }
+
+        // --- DRAG AND DROP UTILITY ---
+        function makeElementDraggable(element, onDragEnd) {
+            let posX = 0, posY = 0, mouseX = 0, mouseY = 0;
+
+            element.onmousedown = dragMouseDown;
+            element.ontouchstart = dragTouchStart;
+
+            function dragMouseDown(e) {
+                e.preventDefault();
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+                element.classList.add('active');
+            }
+
+            function dragTouchStart(e) {
+                const touch = e.touches[0];
+                mouseX = touch.clientX;
+                mouseY = touch.clientY;
+                document.ontouchend = closeDragElement;
+                document.ontouchmove = elementTouchMove;
+                element.classList.add('active');
+            }
+
+            function elementDrag(e) {
+                e.preventDefault();
+                posX = mouseX - e.clientX;
+                posY = mouseY - e.clientY;
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+
+                let newTop = element.offsetTop - posY;
+                let newLeft = element.offsetLeft - posX;
+
+                element.style.top = newTop + "px";
+                element.style.left = newLeft + "px";
+            }
+
+            function elementTouchMove(e) {
+                const touch = e.touches[0];
+                posX = mouseX - touch.clientX;
+                posY = mouseY - touch.clientY;
+                mouseX = touch.clientX;
+                mouseY = touch.clientY;
+
+                let newTop = element.offsetTop - posY;
+                let newLeft = element.offsetLeft - posX;
+
+                element.style.top = newTop + "px";
+                element.style.left = newLeft + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+                document.ontouchend = null;
+                document.ontouchmove = null;
+                element.classList.remove('active');
+
+                if (onDragEnd) {
+                    onDragEnd(element.offsetLeft, element.offsetTop);
+                }
+            }
+        }
+
+        // --- ASYNC HELPER TO PRE-LOAD IMAGES FOR EXPORT ---
+        function preloadImage(src) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => resolve(img);
+                img.onerror = () => resolve(img); // resolve anyway to avoid breaking PDF
+                img.src = src;
+            });
+        }
+
+        // --- HIGH-RES JPG GENERATION & DOWNLOAD WITH 4 VIEWS RENDER GUARANTEE ---
+        async function generateJPG() {
+            const btn = document.getElementById('downloadBtn');
+            const originalBtnHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-xl"></i> Generando Maqueta JPG...`;
+
+            try {
+                // Preload all drawing image elements
+                await Promise.all(state.drawings.map(d => preloadImage(d.src)));
+
+                // Populate Sheet Meta Data
+                document.getElementById('sheetDate').textContent = new Date().toLocaleDateString('es-ES', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                });
+                
+                document.getElementById('sheetStudentName').textContent = state.studentName || 'Sin Nombre';
+                document.getElementById('sheetStudentGrade').textContent = state.studentGrade || 'Sin Grado';
+                
+                const catName = SIZE_DATA[state.category].label;
+                const dims = SIZE_DATA[state.category].tallas[state.sizeKey];
+                
+                document.getElementById('sheetSize').textContent = `${catName} - Talla ${state.sizeKey}`;
+                document.getElementById('sheetDimensions').textContent = `${dims.width} cm (Ancho) x ${dims.length} cm (Largo)`;
+
+                // Custom Text Spec
+                const sheetTextEl = document.getElementById('sheetCustomText');
+                sheetTextEl.textContent = state.customText || '(Sin texto personalizado)';
+                sheetTextEl.style.color = state.textColor;
+                document.getElementById('sheetTextLocation').textContent = state.textTargetBack ? 'Vista Posterior' : 'Vista Frontal';
+
+                // Total Drawings Area & Grid
+                const totalArea = calculateTotalArea();
+                document.getElementById('sheetTotalArea').textContent = `Área Total: ${totalArea} cm² / 300 cm²`;
+
+                const sheetDrawingsGrid = document.getElementById('sheetDrawingsGrid');
+                sheetDrawingsGrid.innerHTML = '';
+
+                if (state.drawings.length === 0) {
+                    sheetDrawingsGrid.innerHTML = `<p class="text-xs text-slate-400 col-span-3 italic font-semibold">No hay dibujos cargados.</p>`;
+                } else {
+                    state.drawings.forEach((d, i) => {
+                        const item = document.createElement('div');
+                        item.className = 'bg-white p-2 rounded-xl border border-royal-200 flex items-center gap-2 text-[11px] shadow-sm';
+                        item.innerHTML = `
+                            <img src="${d.src}" class="w-8 h-8 object-cover rounded-lg border border-royal-200">
+                            <div>
+                                <span class="font-black block text-royal-950">Dibujo #${i + 1}</span>
+                                <span class="text-royal-700 font-bold">${d.sizeCm} x ${d.sizeCm} cm (${d.sizeCm * d.sizeCm} cm²)</span>
+                            </div>
+                        `;
+                        sheetDrawingsGrid.appendChild(item);
+                    });
+                }
+
+                // Render 4 Mini Views with GUARANTEED COMPLETE VISUALS
+                const viewsGrid = document.getElementById('sheetViewsGrid');
+                viewsGrid.innerHTML = '';
+
+                const views = ['front', 'back', 'sleeveLeft', 'sleeveRight'];
+                const viewNames = { front: 'FRONTAL', back: 'POSTERIOR', sleeveLeft: 'MANGA IZQ.', sleeveRight: 'MANGA DER.' };
+
+                // Scale Context: Main canvas 380x460 px -> Printable mini card 230x278 px
+                const scaleRatio = 230 / 380;
+
+                for (let v of views) {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white p-2 rounded-2xl border-2 border-royal-200 text-center flex flex-col items-center shadow-sm';
+                    
+                    const title = document.createElement('span');
+                    title.className = 'text-xs font-black text-royal-800 mb-1.5 uppercase tracking-wide';
+                    title.textContent = viewNames[v];
+                    card.appendChild(title);
+
+                    // Mini box wrapper
+                    const miniBox = document.createElement('div');
+                    miniBox.className = 'relative w-[230px] h-[278px] bg-royal-50/50 rounded-xl border border-royal-200 flex items-center justify-center overflow-hidden';
+                    
+                    // Base SVG Shirt Vector for this view
+                    const svgDiv = document.createElement('div');
+                    svgDiv.className = 'absolute inset-0 pointer-events-none w-full h-full';
+                    svgDiv.innerHTML = getShirtSVGMarkup(v);
+                    miniBox.appendChild(svgDiv);
+
+                    // Render Text if on this view
+                    const isTextHere = (state.textTargetBack && v === 'back') || (!state.textTargetBack && v === 'front');
+                    if (state.customText && isTextHere) {
+                        const textPos = state.textTargetBack ? state.textPos.back : state.textPos.front;
+                        const txt = document.createElement('div');
+                        txt.className = 'absolute comic-font font-bold select-none p-0.5 rounded z-20';
+                        txt.style.color = state.textColor;
+                        txt.style.fontSize = `${Math.round(20 * scaleRatio)}px`;
+                        txt.style.left = `${Math.round(textPos.x * scaleRatio)}px`;
+                        txt.style.top = `${Math.round(textPos.y * scaleRatio)}px`;
+                        txt.style.maxHeight = '50px';
+                        txt.style.maxWidth = '110px';
+                        txt.style.textShadow = '1px 1px 2px rgba(255,255,255,0.9)';
+                        txt.textContent = state.customText;
+                        miniBox.appendChild(txt);
+                    }
+
+                    // Render Drawings for this view
+                    const vDrawings = state.drawings.filter(d => d.view === v);
+                    vDrawings.forEach(d => {
+                        const imgWrap = document.createElement('div');
+                        imgWrap.className = 'absolute rounded overflow-hidden shadow-sm border border-royal-300 z-10';
+                        
+                        const basePx = d.sizeCm === 10 ? 70 : 38;
+                        const scaledPx = Math.round(basePx * scaleRatio);
+
+                        imgWrap.style.width = `${scaledPx}px`;
+                        imgWrap.style.height = `${scaledPx}px`;
+                        imgWrap.style.left = `${Math.round(d.x * scaleRatio)}px`;
+                        imgWrap.style.top = `${Math.round(d.y * scaleRatio)}px`;
+
+                        const imgEl = document.createElement('img');
+                        imgEl.src = d.src;
+                        imgEl.className = 'w-full h-full object-cover';
+                        imgWrap.appendChild(imgEl);
+
+                        miniBox.appendChild(imgWrap);
+                    });
+
+                    card.appendChild(miniBox);
+                    viewsGrid.appendChild(card);
+                }
+
+                // Short delay to allow DOM & images to completely settle
+                await new Promise(r => setTimeout(r, 200));
+
+                // Render Printable Sheet to Canvas using html2canvas
+                const printableArea = document.getElementById('printableSheet');
+                const canvas = await html2canvas(printableArea, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff'
+                });
+
+                // Trigger Download
+                const imageURI = canvas.toDataURL('image/jpeg', 0.95);
+                const link = document.createElement('a');
+                const cleanStudentName = (state.studentName || 'estudiante').replace(/\s+/g, '_');
+                link.download = `Franela_AbrazoEnFamilia_${cleanStudentName}_Talla${state.sizeKey}.jpg`;
+                link.href = imageURI;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (err) {
+                console.error("Error al generar JPG:", err);
+                alert("Ocurrió un inconveniente al generar la imagen. Inténtalo de nuevo.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalBtnHtml;
+            }
+        }
+    </script>
+</body>
+</html>
